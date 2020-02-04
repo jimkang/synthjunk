@@ -31,6 +31,7 @@
   "dependencies": {
     "accessor": "^3.0.0",
     "d3-selection": "^1.4.1",
-    "lodash.pairs": "^3.0.1"
+    "lodash.pairs": "^3.0.1",
+    "seedrandom": "^3.0.5"
   }
 }

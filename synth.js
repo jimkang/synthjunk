@@ -1,8 +1,12 @@
+var seedrandom = require('seedrandom');
+
 function playSynth({
   index,
   modFreq,
   carrierType,
   carrierFreq,
+  carrierCustomWaveArrayLength,
+  carrierCustomWaveSeed,
   envelopePeakRate,
   envelopeDecayRate,
   timeNeededForEnvelopeDecay = 2,
@@ -26,8 +30,22 @@ function playSynth({
   modulatorAmp.gain.value = deviation;
 
   var carrierOsc = ctx.createOscillator();
-  carrierOsc.type = carrierType;
-  carrierOsc.frequency.value = carrierFreq;
+  if (
+    carrierType === 'custom' &&
+    carrierCustomWaveArrayLength &&
+    carrierCustomWaveSeed
+  ) {
+    carrierOsc.setPeriodicWave(
+      getCustomWave({
+        carrierCustomWaveArrayLength,
+        carrierCustomWaveSeed,
+        ctx
+      })
+    );
+  } else {
+    carrierOsc.type = carrierType;
+    carrierOsc.frequency.value = carrierFreq;
+  }
 
   var envelope = ctx.createGain();
 
@@ -62,6 +80,24 @@ function getVibrato({ rateFreq, pitchVariance, ctx }) {
   amp.gain.value = pitchVariance;
   generator.connect(amp);
   return { generator, amp };
+}
+
+function getCustomWave({
+  carrierCustomWaveArrayLength,
+  carrierCustomWaveSeed,
+  ctx
+}) {
+  var random = seedrandom(carrierCustomWaveSeed);
+  var real = new Float32Array(carrierCustomWaveArrayLength);
+  var imaginary = new Float32Array(carrierCustomWaveArrayLength);
+  real[0] = 0;
+  imaginary[0] = 0;
+  for (var i = 1; i < carrierCustomWaveArrayLength; ++i) {
+    real[i] = -1.0 + random() * 2;
+    imaginary[i] = -1.0 + random() * 2;
+  }
+  console.log('real', real, 'imaginary', imaginary);
+  return ctx.createPeriodicWave(real, imaginary);
 }
 
 module.exports = playSynth;

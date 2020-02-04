@@ -1,6 +1,6 @@
 body {
   font-size: 24pt;
-  font-family: futura, sans-serif;
+  font-family: Ubuntu, roboto, noto, segoe ui, arial, -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, sans-serif;
   background-color: #fff;
   color: #666;
   margin-bottom: 2em;
@@ -51,7 +51,6 @@ button {
   border-width: 1px;
   border-color: #aaa;
   border-style: solid;
-  font-family: futura;
   min-width: 44px;
   box-shadow: #444 0 0 4px;
 }

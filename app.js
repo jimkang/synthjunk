@@ -20,6 +20,8 @@ var decayRateField = document.getElementById('decay-rate-field');
 var vibratoRateField = document.getElementById('vibrato-rate-field');
 var vibratoPitchField = document.getElementById('vibrato-pitch-field');
 var durationField = document.getElementById('duration-field');
+var arrayLengthField = document.getElementById('array-length-field');
+var waveSeedField = document.getElementById('wave-seed-field');
 
 var synths = [];
 
@@ -29,6 +31,8 @@ function createSynth() {
     modFreq: +modFreqField.value,
     carrierType: waveTypeSelect.value,
     carrierFreq: +carrierField.value,
+    carrierCustomWaveArrayLength: +arrayLengthField.value,
+    carrierCustomWaveSeed: waveSeedField.value,
     envelopePeakRate: +peakRateField.value,
     envelopeDecayRate: +decayRateField.value,
     vibratoRateFreq: +vibratoRateField.value,
