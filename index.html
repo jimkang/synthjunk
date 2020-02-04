@@ -8,21 +8,47 @@
   <body class="centered-col">
     <pre id="status-message" class="hidden"></pre>
 
-    <div><label>Modulation index:</label><input id="index-field" type="number" value="1" /></div>
-    <div><label>Modulation frequency:</label><input id="mod-freq-field" type="number" value="300" /></div>
-    <div><label>Carrier frequency:</label><input id="carrier-field" type="number" value="100" /></div>
-    <div><label>Carrier wave type:</label><select id="wave-type-select" >
-  <option value="sawtooth" selected>sawtooth</option>
-  <option value="sine">sine</option>
-  <option value="square">square</option>
-  <option value="triangle">triangle</option>
-  <div><label>Envelope peak rate constant:</label><input id="peak-rate-field" type="number" value="0.1" /></div>
-  <div><label>Envelope decay rate constant:</label><input id="decay-rate-field" type="number" value="0.2" /></div>
-  <div><label>Vibrato rate frequency (Hz):</label><input id="vibrato-rate-field" type="number" value="5" /></div>
-  <div><label>Vibrato pitch variance (cents):</label><input id="vibrato-pitch-field" type="number" value="30" /></div>
-</select>
-</select>
-</div>
+    <div>
+      <label>Modulation index:</label
+      ><input id="index-field" type="number" value="1" />
+    </div>
+    <div>
+      <label>Modulation frequency:</label
+      ><input id="mod-freq-field" type="number" value="300" />
+    </div>
+    <div>
+      <label>Carrier frequency:</label
+      ><input id="carrier-field" type="number" value="100" />
+    </div>
+    <div>
+      <label>Carrier wave type:</label
+      ><select id="wave-type-select">
+        <option value="sawtooth" selected>sawtooth</option>
+        <option value="sine">sine</option>
+        <option value="square">square</option>
+        <option value="triangle">triangle</option>
+      </select>
+      <div>
+        <label>Envelope peak rate constant:</label
+        ><input id="peak-rate-field" type="number" value="0.1" />
+      </div>
+      <div>
+        <label>Envelope decay rate constant:</label
+        ><input id="decay-rate-field" type="number" value="0.2" />
+      </div>
+      <div>
+        <label>Vibrato rate frequency (Hz):</label
+        ><input id="vibrato-rate-field" type="number" value="5" />
+      </div>
+      <div>
+        <label>Vibrato pitch variance (cents):</label
+        ><input id="vibrato-pitch-field" type="number" value="30" />
+      </div>
+      <div>
+        <label>Sound duration (seconds):</label
+        ><input id="duration-field" type="number" value="1" />
+      </div>
+    </div>
     <button id="start-button">Play</button>
 
     <script src="index.js"></script>
