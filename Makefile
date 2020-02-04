@@ -12,7 +12,7 @@ prettier:
 	prettier --single-quote --write "**/*.js"
 
 pushall: sync
-	git push origin master && npm publish
+	git push origin master
 
 run:
 	wzrd app.js:index.js -- \
@@ -29,3 +29,6 @@ sync:
 
 set-up-dir:
 	ssh $(USER)@$(SERVER) "mkdir -p $(APPDIR)"
+
+deploy:
+	make build && git commit -a -m"Build" && make pushall
