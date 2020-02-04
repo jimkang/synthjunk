@@ -96,7 +96,7 @@ function getCustomWave({
     real[i] = -1.0 + random() * 2;
     imaginary[i] = -1.0 + random() * 2;
   }
-  console.log('real', real, 'imaginary', imaginary);
+  //console.log('real', real, 'imaginary', imaginary);
   return ctx.createPeriodicWave(real, imaginary);
 }
 
