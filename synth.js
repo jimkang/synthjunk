@@ -1,4 +1,4 @@
-function synth({
+function playSynth({
   index,
   modFreq,
   carrierType,
@@ -8,6 +8,8 @@ function synth({
   timeNeededForEnvelopeDecay = 2,
   vibratoRateFreq,
   vibratoPitchVariance,
+  delaySeconds,
+  durationSeconds,
   ctx
 }) {
   const deviation = index * modFreq;
@@ -35,9 +37,9 @@ function synth({
   carrierOsc.connect(envelope);
   envelope.connect(ctx.destination);
 
-  return play;
+  play();
 
-  function play({ delaySeconds, durationSeconds }) {
+  function play() {
     const startTime = ctx.currentTime + delaySeconds;
     const stopTime = startTime + durationSeconds;
     envelope.gain.value = 0;
@@ -62,4 +64,4 @@ function getVibrato({ rateFreq, pitchVariance, ctx }) {
   return { generator, amp };
 }
 
-module.exports = synth;
+module.exports = playSynth;

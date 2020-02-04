@@ -28,5 +28,9 @@
     "audio-context-singleton": "^1.0.2",
     "oknok": "^3.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "accessor": "^3.0.0",
+    "d3-selection": "^1.4.1",
+    "lodash.pairs": "^3.0.1"
+  }
 }
