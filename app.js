@@ -17,15 +17,12 @@ function start() {
   getCurrentContext(oknok({ ok: useContext, nok: handleError }));
 
   function useContext(ctx) {
-    var carrierOsc = ctx.createOscillator();
-    carrierOsc.type = waveTypeSelect.value;
-    carrierOsc.frequency.value = carrierField.value;
-
     var play = synth({
       ctx,
       index: indexField.value,
       modFreq: modFreqField.value,
-      carrierOsc
+      carrierType: waveTypeSelect.value,
+      carrierFreq: carrierField.value
     });
 
     play({ delaySeconds: 0, durationSeconds: 1 });

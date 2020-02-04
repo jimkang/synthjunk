@@ -1,10 +1,14 @@
-function synth({ index, modFreq, carrierOsc, ctx }) {
+function synth({ index, modFreq, carrierType, carrierFreq, ctx }) {
   const deviation = index * modFreq;
   var modulator = ctx.createOscillator();
   modulator.frequency.value = modFreq;
 
   var modulatorAmp = ctx.createGain();
   modulatorAmp.gain.value = deviation;
+
+  var carrierOsc = ctx.createOscillator();
+  carrierOsc.type = carrierType;
+  carrierOsc.frequency.value = carrierFreq;
 
   modulator.connect(modulatorAmp);
   modulatorAmp.connect(carrierOsc.frequency);
