@@ -6,9 +6,17 @@ function synth({
   envelopePeakRate,
   envelopeDecayRate,
   timeNeededForEnvelopeDecay = 2,
+  vibratoRateFreq,
+  vibratoPitchVariance,
   ctx
 }) {
   const deviation = index * modFreq;
+
+  var vibrato = getVibrato({
+    rateFreq: vibratoRateFreq,
+    pitchVariance: vibratoPitchVariance,
+    ctx
+  });
   var modulator = ctx.createOscillator();
   modulator.frequency.value = modFreq;
 
@@ -21,6 +29,7 @@ function synth({
 
   var envelope = ctx.createGain();
 
+  vibrato.amp.connect(modulator.detune);
   modulator.connect(modulatorAmp);
   modulatorAmp.connect(carrierOsc.frequency);
   carrierOsc.connect(envelope);
@@ -34,11 +43,23 @@ function synth({
     envelope.gain.value = 0;
     envelope.gain.setTargetAtTime(1, startTime, envelopePeakRate);
     envelope.gain.setTargetAtTime(0, stopTime, envelopeDecayRate);
+
     modulator.start(startTime);
-    modulator.stop(stopTime);
+    modulator.stop(stopTime + timeNeededForEnvelopeDecay);
     carrierOsc.start(startTime);
     carrierOsc.stop(stopTime + timeNeededForEnvelopeDecay);
+    vibrato.generator.start(startTime);
+    vibrato.generator.stop(stopTime + timeNeededForEnvelopeDecay);
   }
+}
+
+function getVibrato({ rateFreq, pitchVariance, ctx }) {
+  var generator = ctx.createOscillator();
+  generator.frequency.value = rateFreq;
+  var amp = ctx.createGain();
+  amp.gain.value = pitchVariance;
+  generator.connect(amp);
+  return { generator, amp };
 }
 
 module.exports = synth;

@@ -12,6 +12,8 @@ var carrierField = document.getElementById('carrier-field');
 var waveTypeSelect = document.getElementById('wave-type-select');
 var peakRateField = document.getElementById('peak-rate-field');
 var decayRateField = document.getElementById('decay-rate-field');
+var vibratoRateField = document.getElementById('vibrato-rate-field');
+var vibratoPitchField = document.getElementById('vibrato-pitch-field');
 
 function start() {
   getCurrentContext(oknok({ ok: useContext, nok: handleError }));
@@ -24,7 +26,9 @@ function start() {
       carrierType: waveTypeSelect.value,
       carrierFreq: carrierField.value,
       envelopePeakRate: peakRateField.value,
-      envelopeDecayRate: decayRateField.value
+      envelopeDecayRate: decayRateField.value,
+      vibratoRateFreq: vibratoRateField.value,
+      vibratoPitchVariance: vibratoPitchField.value
     });
 
     play({ delaySeconds: 0, durationSeconds: 1 });
