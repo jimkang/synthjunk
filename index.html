@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>Synthjunk</title>
+    <link rel="stylesheet" href="app.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body class="centered-col">
+    <pre id="status-message" class="hidden"></pre>
+
+    <div><label>Modulation index:</label><input id="index-field" type="number" value="1" /></div>
+    <div><label>Modulation frequency:</label><input id="mod-freq-field" type="number" value="300" /></div>
+    <div><label>Carrier frequency:</label><input id="carrier-field" type="number" value="100" /></div>
+    <div><label>Carrier wave type:</label><select id="wave-type-select" >
+  <option value="sawtooth" selected>sawtooth</option>
+  <option value="sine">sine</option>
+  <option value="square">square</option>
+  <option value="triangle">triangle</option>
+</select>
+</div>
+    <button id="start-button">Play</button>
+
+    <script src="index.js"></script>
+  </body>
+</html>

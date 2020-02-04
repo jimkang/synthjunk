@@ -1,0 +1,32 @@
+{
+  "name": "synthjunk",
+  "version": "1.0.0",
+  "description": "A thing for messing with sounds.",
+  "main": "index.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jimkang/synthjunk.git"
+  },
+  "keywords": [
+    "audio",
+    "browser",
+    "utility"
+  ],
+  "author": "Jim Kang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jimkang/synthjunk/issues"
+  },
+  "homepage": "https://github.com/jimkang/synthjunk",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "babelify": "^7.3.0",
+    "browserify": "^16.2.3",
+    "handle-error-web": "^1.0.1",
+    "uglify-es": "^3.1.9",
+    "audio-context-singleton": "^1.0.2",
+    "oknok": "^3.0.0"
+  },
+  "dependencies": {}
+}
