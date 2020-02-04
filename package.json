@@ -1,9 +1,8 @@
 {
   "name": "synthjunk",
   "version": "1.0.0",
-  "description": "A thing for messing with sounds.",
-  "main": "index.js",
-  "private": true,
+  "description": "A module for producing rudimentary synths.",
+  "main": "synth.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:jimkang/synthjunk.git"
@@ -14,7 +13,7 @@
     "utility"
   ],
   "author": "Jim Kang",
-  "license": "MIT",
+  "license": "BSD",
   "bugs": {
     "url": "https://github.com/jimkang/synthjunk/issues"
   },

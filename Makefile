@@ -13,6 +13,7 @@ prettier:
 
 pushall: sync
 	git push origin master
+	npm publish
 
 run:
 	wzrd app.js:index.js -- \
