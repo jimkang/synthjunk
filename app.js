@@ -10,10 +10,10 @@ var indexField = document.getElementById('index-field');
 var modFreqField = document.getElementById('mod-freq-field');
 var carrierField = document.getElementById('carrier-field');
 var waveTypeSelect = document.getElementById('wave-type-select');
+var peakRateField = document.getElementById('peak-rate-field');
+var decayRateField = document.getElementById('decay-rate-field');
 
 function start() {
-  console.log('started');
-
   getCurrentContext(oknok({ ok: useContext, nok: handleError }));
 
   function useContext(ctx) {
@@ -22,7 +22,9 @@ function start() {
       index: indexField.value,
       modFreq: modFreqField.value,
       carrierType: waveTypeSelect.value,
-      carrierFreq: carrierField.value
+      carrierFreq: carrierField.value,
+      envelopePeakRate: peakRateField.value,
+      envelopeDecayRate: decayRateField.value
     });
 
     play({ delaySeconds: 0, durationSeconds: 1 });
