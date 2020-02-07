@@ -22,6 +22,9 @@ var vibratoPitchField = document.getElementById('vibrato-pitch-field');
 var durationField = document.getElementById('duration-field');
 var arrayLengthField = document.getElementById('array-length-field');
 var waveSeedField = document.getElementById('wave-seed-field');
+var reverbTimeField = document.getElementById('reverb-time-field');
+var reverbWetField = document.getElementById('reverb-wet-field');
+var reverbDryField = document.getElementById('reverb-dry-field');
 
 var synths = [];
 
@@ -36,7 +39,10 @@ function createSynth() {
     envelopePeakRate: +peakRateField.value,
     envelopeDecayRate: +decayRateField.value,
     vibratoRateFreq: +vibratoRateField.value,
-    vibratoPitchVariance: vibratoPitchField.value,
+    vibratoPitchVariance: +vibratoPitchField.value,
+    reverbTime: +reverbTimeField.value,
+    reverbWet: +reverbWetField.value,
+    reverbDry: +reverbDryField.value,
     durationSeconds: +durationField.value
   };
   synths.push({ opts });

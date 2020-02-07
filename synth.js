@@ -1,4 +1,5 @@
 var seedrandom = require('seedrandom');
+var Reverb = require('soundbank-reverb');
 
 function playSynth({
   index,
@@ -14,6 +15,9 @@ function playSynth({
   vibratoPitchVariance,
   delaySeconds,
   durationSeconds,
+  reverbTime,
+  reverbWet,
+  reverbDry,
   ctx
 }) {
   const deviation = index * modFreq;
@@ -49,11 +53,26 @@ function playSynth({
 
   var envelope = ctx.createGain();
 
+  var reverb;
+  if (reverbTime) {
+    reverb = Reverb(ctx);
+    reverb.time = reverbTime;
+    reverb.wet.value = reverbWet;
+    reverb.dry.value = reverbDry;
+  }
+
   vibrato.amp.connect(modulator.detune);
   modulator.connect(modulatorAmp);
   modulatorAmp.connect(carrierOsc.frequency);
   carrierOsc.connect(envelope);
   envelope.connect(ctx.destination);
+
+  if (reverbTime) {
+    envelope.connect(reverb);
+    reverb.connect(ctx.destination);
+  } else {
+    envelope.connect(ctx.destination);
+  }
 
   play();
 
