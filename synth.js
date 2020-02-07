@@ -52,7 +52,6 @@ function playSynth({
   }
 
   var envelope = ctx.createGain();
-  envelope.gain.value = 0.3;
 
   var reverb;
   if (reverbTime) {
@@ -81,7 +80,7 @@ function playSynth({
     const startTime = ctx.currentTime + delaySeconds;
     const stopTime = startTime + durationSeconds;
     envelope.gain.value = 0;
-    envelope.gain.setTargetAtTime(1, startTime, envelopePeakRate);
+    envelope.gain.setTargetAtTime(0.1, startTime, envelopePeakRate);
     envelope.gain.setTargetAtTime(0, stopTime, envelopeDecayRate);
 
     modulator.start(startTime);
