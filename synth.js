@@ -52,7 +52,7 @@ function playSynth({
   }
 
   var envelope = ctx.createGain();
-  envelope.gain.value = 0.5;
+  envelope.gain.value = 0.3;
 
   var reverb;
   if (reverbTime) {
