@@ -53,6 +53,8 @@ function playSynth({
 
   var envelope = ctx.createGain();
 
+  var compressor = ctx.createDynamicsCompressor();
+
   var reverb;
   if (reverbTime) {
     reverb = Reverb(ctx);
@@ -65,14 +67,16 @@ function playSynth({
   modulator.connect(modulatorAmp);
   modulatorAmp.connect(carrierOsc.frequency);
   carrierOsc.connect(envelope);
-  envelope.connect(ctx.destination);
+  //envelope.connect(ctx.destination);
 
   if (reverbTime) {
     envelope.connect(reverb);
-    reverb.connect(ctx.destination);
+    reverb.connect(compressor);
   } else {
-    envelope.connect(ctx.destination);
+    envelope.connect(compressor);
   }
+
+  compressor.connect(ctx.destination);
 
   play();
 
@@ -82,6 +86,12 @@ function playSynth({
     envelope.gain.value = 0;
     envelope.gain.setTargetAtTime(0.1, startTime, envelopePeakRate);
     envelope.gain.setTargetAtTime(0, stopTime, envelopeDecayRate);
+
+    compressor.threshold.setValueAtTime(-50, startTime);
+    compressor.knee.setValueAtTime(40, startTime);
+    compressor.ratio.setValueAtTime(12, startTime);
+    compressor.attack.setValueAtTime(0, startTime);
+    compressor.release.setValueAtTime(0.25, startTime);
 
     modulator.start(startTime);
     modulator.stop(stopTime + timeNeededForEnvelopeDecay);
