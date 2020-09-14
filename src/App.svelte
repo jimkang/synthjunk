@@ -1,7 +1,7 @@
 <script>
 import SynthPanel from './SynthPanel.svelte';
 import { version } from '../package.json';
-import synthDefDefaults from './synth-def-defaults';
+import synthDefPropDefs from './synth-def-prop-defs';
 import RouteState from 'route-state';
 import { synthDefs } from './store';
 
@@ -27,7 +27,13 @@ function onAddSynthClick() {
 }
 
 function createSynthDef() {
-  return Object.assign({}, synthDefDefaults);
+  var newDef = {};
+  synthDefPropDefs.forEach(addDefault);
+  return newDef;
+
+  function addDefault(propDef) {
+    newDef[propDef.name] = propDef.defaultValue;
+  }
 }
 
 function onSaveSynthsClick() {
