@@ -6,6 +6,12 @@ var synthDefPropDefs = [
     defaultValue: 'Cool new synth'
   },
   {
+    propName: 'modOn',
+    displayName: 'Modulate',
+    inputType: 'checkbox',
+    defaultValue: true
+  },
+  {
     propName: 'modIndex',
     displayName: 'Modulation index',
     inputType: 'number',

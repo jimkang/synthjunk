@@ -2,6 +2,7 @@ import seedrandom from 'seedrandom';
 import Reverb from 'soundbank-reverb';
 
 export function playSynth({
+  modOn = false,
   modIndex,
   modFreq,
   carrierWaveType,
@@ -20,18 +21,11 @@ export function playSynth({
   reverbDry,
   ctx
 }) {
-  const deviation = modIndex * modFreq;
-
   var vibrato = getVibrato({
     rateFreq: vibratoRateHz,
     pitchVariance: vibratoPitchVarCents,
     ctx
   });
-  var modulator = ctx.createOscillator();
-  modulator.frequency.value = modFreq;
-
-  var modulatorAmp = ctx.createGain();
-  modulatorAmp.gain.value = deviation;
 
   var carrierOsc = ctx.createOscillator();
   if (
@@ -63,9 +57,16 @@ export function playSynth({
     reverb.dry.value = reverbDry;
   }
 
-  vibrato.amp.connect(modulator.detune);
-  modulator.connect(modulatorAmp);
-  modulatorAmp.connect(carrierOsc.frequency);
+  if (modOn) {
+    const deviation = modIndex * modFreq;
+    var modulator = ctx.createOscillator();
+    modulator.frequency.value = modFreq;
+    var modulatorAmp = ctx.createGain();
+    modulatorAmp.gain.value = deviation;
+    vibrato.amp.connect(modulator.detune);
+    modulator.connect(modulatorAmp);
+    modulatorAmp.connect(carrierOsc.frequency);
+  }
   carrierOsc.connect(envelope);
   //envelope.connect(ctx.destination);
 
@@ -93,8 +94,10 @@ export function playSynth({
     compressor.attack.setValueAtTime(0, startTime);
     compressor.release.setValueAtTime(0.25, startTime);
 
-    modulator.start(startTime);
-    modulator.stop(stopTime + timeNeededForEnvelopeDecay);
+    if (modOn) {
+      modulator.start(startTime);
+      modulator.stop(stopTime + timeNeededForEnvelopeDecay);
+    }
     carrierOsc.start(startTime);
     carrierOsc.stop(stopTime + timeNeededForEnvelopeDecay);
     vibrato.generator.start(startTime);

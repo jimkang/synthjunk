@@ -14,12 +14,13 @@ routeState.routeFromHash();
 
 function followRoute({ defs }) {
   if (defs) {
-    $synthDefs.defs = defs;
+    $synthDefs.defs = defs.map(convertRouteBoolsFromHash);
   }
 }
 
 function commitStoreToHash() {
-  routeState.addToRoute({ defs: $synthDefs.defs }, false);
+  var defs = $synthDefs.defs.map(convertRouteBoolsForHash);
+  routeState.addToRoute({ defs }, false);
 }
 
 function onAddSynthClick() {
@@ -39,6 +40,34 @@ function createSynthDef() {
 function onSaveSynthsClick() {
   commitStoreToHash();
   // TODO: Render url in page body, too.
+}
+
+function convertRouteBoolsForHash(origDef) {
+  // Warning: Does not deep clone.
+  var def = Object.assign({}, origDef);
+
+  for (var key in def) {
+    if (typeof def[key] === 'boolean') {
+      def[key] = def[key] ? 'yes' : 'no';
+    }
+  }
+
+  return def;
+}
+
+function convertRouteBoolsFromHash(hashDef) {
+  // Warning: Does not deep clone.
+  var def = Object.assign({}, hashDef);
+
+  for (var key in def) {
+    if (def[key] === 'yes') {
+      def[key] = true;
+    } else if (def[key] === 'no') {
+      def[key] = false;
+    }
+  }
+
+  return def;
 }
 
 </script>

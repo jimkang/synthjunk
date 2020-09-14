@@ -42,6 +42,8 @@ async function onPlayClick() {
         <input type="number" id="{propDef.propName}-input" step={propDef.step} bind:value={synthDef[propDef.propName]}>
       {:else if propDef.inputType === 'range'}
         <input type="range" id="{propDef.propName}-input" bind:value={synthDef[propDef.propName]}>
+      {:else if propDef.inputType === 'checkbox'}
+        <input type="checkbox" id="{propDef.propName}-input" bind:checked={synthDef[propDef.propName]}>
       {/if}
     </li>
     {/each}
