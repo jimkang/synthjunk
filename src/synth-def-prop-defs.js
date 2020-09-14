@@ -9,30 +9,6 @@ var synthDefPropDefs = [
     defaultValue: 'Cool new synth'
   },
   {
-    propName: 'modOn',
-    displayName: 'Modulate',
-    inputType: 'checkbox',
-    defaultValue: true
-  },
-  {
-    propName: 'modIndex',
-    displayName: 'Modulation index',
-    inputType: 'number',
-    step: 1,
-    defaultValue: 1,
-    conditionProp: 'modOn',
-    conditionPropVal: true
-  },
-  {
-    propName: 'modFreq',
-    displayName: 'Modulation frequency',
-    inputType: 'number',
-    step: 1,
-    defaultValue: 300,
-    conditionProp: 'modOn',
-    conditionPropVal: true
-  },
-  {
     propName: 'carrierFreq',
     displayName: 'Carrier frequency',
     inputType: 'number',
@@ -64,18 +40,52 @@ var synthDefPropDefs = [
     conditionPropVal: 'custom'
   },
   {
+    propName: 'modOn',
+    displayName: 'Modulate',
+    inputType: 'checkbox',
+    defaultValue: true
+  },
+  {
+    propName: 'modIndex',
+    displayName: 'Modulation index',
+    inputType: 'number',
+    step: 1,
+    defaultValue: 1,
+    conditionProp: 'modOn',
+    conditionPropVal: true
+  },
+  {
+    propName: 'modFreq',
+    displayName: 'Modulation frequency',
+    inputType: 'number',
+    step: 1,
+    defaultValue: 300,
+    conditionProp: 'modOn',
+    conditionPropVal: true
+  },
+  {
+    propName: 'envelopeOn',
+    displayName: 'Envelope',
+    inputType: 'checkbox',
+    defaultValue: true
+  },
+  {
     propName: 'envelopePeakRateK',
     displayName: 'Envelope peak rate constant',
     inputType: 'number',
     step: 0.1,
-    defaultValue: 0.1
+    defaultValue: 0.1,
+    conditionProp: 'envelopeOn',
+    conditionPropVal: true
   },
   {
     propName: 'envelopeDecayRateK',
     displayName: 'envelope decay rate constant',
     inputType: 'number',
     step: 0.1,
-    defaultValue: 0.2
+    defaultValue: 0.2,
+    conditionProp: 'envelopeOn',
+    conditionPropVal: true
   },
   {
     propName: 'vibratoRateHz',

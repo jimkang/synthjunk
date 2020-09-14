@@ -9,6 +9,7 @@ export function playSynth({
   carrierFreq,
   carrierCustomWaveArrayLength,
   carrierCustomWaveSeed,
+  envelopeOn = false,
   envelopePeakRateK,
   envelopeDecayRateK,
   timeNeededForEnvelopeDecay = 2,
@@ -45,8 +46,6 @@ export function playSynth({
     carrierOsc.frequency.value = carrierFreq;
   }
 
-  var envelope = ctx.createGain();
-
   var compressor = ctx.createDynamicsCompressor();
 
   var reverb;
@@ -67,8 +66,9 @@ export function playSynth({
     modulator.connect(modulatorAmp);
     modulatorAmp.connect(carrierOsc.frequency);
   }
+
+  let envelope = ctx.createGain();
   carrierOsc.connect(envelope);
-  //envelope.connect(ctx.destination);
 
   if (reverbSeconds) {
     envelope.connect(reverb);
@@ -84,9 +84,11 @@ export function playSynth({
   function play() {
     const startTime = ctx.currentTime + delaySeconds;
     const stopTime = startTime + soundDurationSeconds;
-    envelope.gain.value = 0;
-    envelope.gain.setTargetAtTime(0.1, startTime, envelopePeakRateK);
-    envelope.gain.setTargetAtTime(0, stopTime, envelopeDecayRateK);
+    if (envelopeOn) {
+      envelope.gain.value = 0;
+      envelope.gain.setTargetAtTime(0.1, startTime, envelopePeakRateK);
+      envelope.gain.setTargetAtTime(0, stopTime, envelopeDecayRateK);
+    }
 
     compressor.threshold.setValueAtTime(-50, startTime);
     compressor.knee.setValueAtTime(40, startTime);
