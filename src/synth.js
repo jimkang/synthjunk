@@ -1,30 +1,30 @@
-var seedrandom = require('seedrandom');
-var Reverb = require('soundbank-reverb');
+import seedrandom from 'seedrandom';
+import Reverb from 'soundbank-reverb';
 
-function playSynth({
-  index,
+export function playSynth({
+  modIndex,
   modFreq,
-  carrierType,
+  carrierWaveType,
   carrierFreq,
   carrierCustomWaveArrayLength,
   carrierCustomWaveSeed,
-  envelopePeakRate,
-  envelopeDecayRate,
+  envelopePeakRateK,
+  envelopeDecayRateK,
   timeNeededForEnvelopeDecay = 2,
-  vibratoRateFreq,
-  vibratoPitchVariance,
+  vibratoRateHz,
+  vibratoPitchVarCents,
   delaySeconds,
-  durationSeconds,
-  reverbTime,
+  soundDurationSeconds,
+  reverbSeconds,
   reverbWet,
   reverbDry,
   ctx
 }) {
-  const deviation = index * modFreq;
+  const deviation = modIndex * modFreq;
 
   var vibrato = getVibrato({
-    rateFreq: vibratoRateFreq,
-    pitchVariance: vibratoPitchVariance,
+    rateFreq: vibratoRateHz,
+    pitchVariance: vibratoPitchVarCents,
     ctx
   });
   var modulator = ctx.createOscillator();
@@ -35,7 +35,7 @@ function playSynth({
 
   var carrierOsc = ctx.createOscillator();
   if (
-    carrierType === 'custom' &&
+    carrierWaveType === 'custom' &&
     carrierCustomWaveArrayLength &&
     carrierCustomWaveSeed
   ) {
@@ -47,7 +47,7 @@ function playSynth({
       })
     );
   } else {
-    carrierOsc.type = carrierType;
+    carrierOsc.type = carrierWaveType;
     carrierOsc.frequency.value = carrierFreq;
   }
 
@@ -56,9 +56,9 @@ function playSynth({
   var compressor = ctx.createDynamicsCompressor();
 
   var reverb;
-  if (reverbTime) {
+  if (reverbSeconds) {
     reverb = Reverb(ctx);
-    reverb.time = reverbTime;
+    reverb.time = reverbSeconds;
     reverb.wet.value = reverbWet;
     reverb.dry.value = reverbDry;
   }
@@ -69,7 +69,7 @@ function playSynth({
   carrierOsc.connect(envelope);
   //envelope.connect(ctx.destination);
 
-  if (reverbTime) {
+  if (reverbSeconds) {
     envelope.connect(reverb);
     reverb.connect(compressor);
   } else {
@@ -82,10 +82,10 @@ function playSynth({
 
   function play() {
     const startTime = ctx.currentTime + delaySeconds;
-    const stopTime = startTime + durationSeconds;
+    const stopTime = startTime + soundDurationSeconds;
     envelope.gain.value = 0;
-    envelope.gain.setTargetAtTime(0.1, startTime, envelopePeakRate);
-    envelope.gain.setTargetAtTime(0, stopTime, envelopeDecayRate);
+    envelope.gain.setTargetAtTime(0.1, startTime, envelopePeakRateK);
+    envelope.gain.setTargetAtTime(0, stopTime, envelopeDecayRateK);
 
     compressor.threshold.setValueAtTime(-50, startTime);
     compressor.knee.setValueAtTime(40, startTime);
@@ -128,5 +128,3 @@ function getCustomWave({
   //console.log('real', real, 'imaginary', imaginary);
   return ctx.createPeriodicWave(real, imaginary);
 }
-
-module.exports = playSynth;
