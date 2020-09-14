@@ -34,14 +34,14 @@ var synthDefPropDefs = [
     valueOptions: ['sawtooth', 'sine', 'square', 'triangle', 'custom']
   },
   {
-    propName: 'customWaveArrayLength',
+    propName: 'carrierCustomWaveArrayLength',
     displayName: 'Custom wave array length',
     inputType: 'number',
     step: 1,
     defaultValue: 2
   },
   {
-    propName: 'customWaveSeed',
+    propName: 'carrierCustomWaveSeed',
     displayName: 'Custom wave seed',
     inputType: 'text',
     defaultValue: 'woom'
