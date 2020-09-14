@@ -83,27 +83,28 @@ export function playSynth({
 
   function play() {
     const startTime = ctx.currentTime + delaySeconds;
-    const stopTime = startTime + soundDurationSeconds;
+    const stopTime = startTime + +soundDurationSeconds;
     if (envelopeOn) {
       envelope.gain.value = 0;
       envelope.gain.setTargetAtTime(0.1, startTime, envelopePeakRateK);
       envelope.gain.setTargetAtTime(0, stopTime, envelopeDecayRateK);
     }
-
     compressor.threshold.setValueAtTime(-50, startTime);
     compressor.knee.setValueAtTime(40, startTime);
     compressor.ratio.setValueAtTime(12, startTime);
     compressor.attack.setValueAtTime(0, startTime);
     compressor.release.setValueAtTime(0.25, startTime);
 
+    const endTime = stopTime + (envelopeOn ? timeNeededForEnvelopeDecay : 0);
+
     if (modOn) {
       modulator.start(startTime);
-      modulator.stop(stopTime + timeNeededForEnvelopeDecay);
+      modulator.stop(endTime);
     }
     carrierOsc.start(startTime);
-    carrierOsc.stop(stopTime + timeNeededForEnvelopeDecay);
+    carrierOsc.stop(endTime);
     vibrato.generator.start(startTime);
-    vibrato.generator.stop(stopTime + timeNeededForEnvelopeDecay);
+    vibrato.generator.stop(endTime);
   }
 }
 
