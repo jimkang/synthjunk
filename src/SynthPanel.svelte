@@ -6,6 +6,7 @@ import { playSynth } from './synth';
 import ContextKeeper from 'audio-context-singleton';
 import ErrorMessage from 'svelte-error-message';
 import ep from 'errorback-promise';
+import SynthProp from './SynthProp.svelte';
 
 let error;
 
@@ -23,29 +24,18 @@ async function onPlayClick() {
   playSynth(Object.assign({ delaySeconds: 0, ctx }, synthDef));
 }
 
+function onBoolPropChanged(e) {
+  //console.log(e.detail.changedBoolProp);
+  // TODO: Rerender just the props that depend on changedBoolProp.
+  synthDef = synthDef;
+}
+
 </script>
 
 <li>
   <ul>
     {#each synthDefPropDefs as propDef }
-    <li>
-      <label for="{propDef.propName}-input">{propDef.displayName}</label>
-      {#if propDef.inputType === 'select'}
-        <select id="{propDef.propName}-input" bind:value={synthDef[propDef.propName]}>
-          {#each propDef.valueOptions as option}
-            <option>{option}</option>
-          {/each}
-        </select>
-      {:else if propDef.inputType === 'text'}
-        <input type="text" id="{propDef.propName}-input" bind:value={synthDef[propDef.propName]}>
-      {:else if propDef.inputType === 'number'}
-        <input type="number" id="{propDef.propName}-input" step={propDef.step} bind:value={synthDef[propDef.propName]}>
-      {:else if propDef.inputType === 'range'}
-        <input type="range" id="{propDef.propName}-input" bind:value={synthDef[propDef.propName]}>
-      {:else if propDef.inputType === 'checkbox'}
-        <input type="checkbox" id="{propDef.propName}-input" bind:checked={synthDef[propDef.propName]}>
-      {/if}
-    </li>
+      <SynthProp propDef={propDef} synthDef={synthDef} on:boolPropChanged={onBoolPropChanged} />
     {/each}
   </ul>
   <button on:click={onPlayClick}>Play</button>

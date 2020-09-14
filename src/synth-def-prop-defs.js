@@ -16,14 +16,18 @@ var synthDefPropDefs = [
     displayName: 'Modulation index',
     inputType: 'number',
     step: 1,
-    defaultValue: 1
+    defaultValue: 1,
+    conditionProp: 'modOn',
+    conditionPropVal: true
   },
   {
     propName: 'modFreq',
     displayName: 'Modulation frequency',
     inputType: 'number',
     step: 1,
-    defaultValue: 300
+    defaultValue: 300,
+    conditionProp: 'modOn',
+    conditionPropVal: true
   },
   {
     propName: 'carrierFreq',
