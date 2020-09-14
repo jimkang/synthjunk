@@ -32,7 +32,7 @@ function createSynthDef() {
   return newDef;
 
   function addDefault(propDef) {
-    newDef[propDef.name] = propDef.defaultValue;
+    newDef[propDef.propName] = propDef.defaultValue;
   }
 }
 

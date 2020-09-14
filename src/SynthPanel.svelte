@@ -26,4 +26,5 @@ import synthDefPropDefs from './synth-def-prop-defs';
     </li>
     {/each}
   </ul>
+  <button>Play</button>
 </li>
