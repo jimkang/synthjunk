@@ -1,3 +1,6 @@
+// Warning! Rerendering after changes props that have a
+// dependency only work for checkbox and select props
+// that are dependencies right now.
 var synthDefPropDefs = [
   {
     propName: 'name',
@@ -48,13 +51,17 @@ var synthDefPropDefs = [
     displayName: 'Custom wave array length',
     inputType: 'number',
     step: 1,
-    defaultValue: 2
+    defaultValue: 2,
+    conditionProp: 'carrierWaveType',
+    conditionPropVal: 'custom'
   },
   {
     propName: 'carrierCustomWaveSeed',
     displayName: 'Custom wave seed',
     inputType: 'text',
-    defaultValue: 'woom'
+    defaultValue: 'woom',
+    conditionProp: 'carrierWaveType',
+    conditionPropVal: 'custom'
   },
   {
     propName: 'envelopePeakRateK',

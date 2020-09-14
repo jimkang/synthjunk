@@ -8,8 +8,8 @@ $: enabled = !propDef.conditionProp || synthDef[propDef.conditionProp] === propD
 
 var dispatch = createEventDispatcher();
 
-function onCheckChange() {
-  dispatch('boolPropChanged', { changedBoolProp: propDef });
+function onPropControlChange() {
+  dispatch('propChanged', { changedProp: propDef });
 }
 
 </script>
@@ -17,7 +17,7 @@ function onCheckChange() {
     <li>
       <label for="{propDef.propName}-input">{propDef.displayName}</label>
       {#if propDef.inputType === 'select'}
-        <select id="{propDef.propName}-input" bind:value={synthDef[propDef.propName]}>
+        <select id="{propDef.propName}-input" bind:value={synthDef[propDef.propName]} on:change={onPropControlChange}>
           {#each propDef.valueOptions as option}
             <option>{option}</option>
           {/each}
@@ -29,7 +29,7 @@ function onCheckChange() {
       {:else if propDef.inputType === 'range'}
         <input type="range" id="{propDef.propName}-input" bind:value={synthDef[propDef.propName]}>
       {:else if propDef.inputType === 'checkbox'}
-        <input type="checkbox" id="{propDef.propName}-input" bind:checked={synthDef[propDef.propName]} on:change={onCheckChange}>
+        <input type="checkbox" id="{propDef.propName}-input" bind:checked={synthDef[propDef.propName]} on:change={onPropControlChange}>
       {/if}
     </li>
 {/if}

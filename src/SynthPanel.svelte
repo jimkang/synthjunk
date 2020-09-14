@@ -24,9 +24,9 @@ async function onPlayClick() {
   playSynth(Object.assign({ delaySeconds: 0, ctx }, synthDef));
 }
 
-function onBoolPropChanged(e) {
-  //console.log(e.detail.changedBoolProp);
-  // TODO: Rerender just the props that depend on changedBoolProp.
+function onPropChanged(e) {
+  //console.log(e.detail.changedProp);
+  // TODO: Rerender just the props that depend on changedProp.
   synthDef = synthDef;
 }
 
@@ -35,7 +35,7 @@ function onBoolPropChanged(e) {
 <li>
   <ul>
     {#each synthDefPropDefs as propDef }
-      <SynthProp propDef={propDef} synthDef={synthDef} on:boolPropChanged={onBoolPropChanged} />
+      <SynthProp propDef={propDef} synthDef={synthDef} on:propChanged={onPropChanged} />
     {/each}
   </ul>
   <button on:click={onPlayClick}>Play</button>
