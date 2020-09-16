@@ -1,5 +1,5 @@
-import seedrandom from 'seedrandom';
 import Reverb from 'soundbank-reverb';
+import { Carrier } from './synth-node';
 
 export function playSynth({
   modOn = false,
@@ -13,6 +13,7 @@ export function playSynth({
   envelopePeakRateK,
   envelopeDecayRateK,
   timeNeededForEnvelopeDecay = 2,
+  vibratoOn = false,
   vibratoRateHz,
   vibratoPitchVarCents,
   delaySeconds,
@@ -22,29 +23,12 @@ export function playSynth({
   reverbDry,
   ctx
 }) {
-  var vibrato = getVibrato({
-    rateFreq: vibratoRateHz,
-    pitchVariance: vibratoPitchVarCents,
-    ctx
-  });
-
-  var carrierOsc = ctx.createOscillator();
-  if (
-    carrierWaveType === 'custom' &&
-    carrierCustomWaveArrayLength &&
+  var carrier = new Carrier(ctx, {
+    carrierFreq,
+    carrierWaveType,
+    carrierCustomWaveArrayLength,
     carrierCustomWaveSeed
-  ) {
-    carrierOsc.setPeriodicWave(
-      getCustomWave({
-        carrierCustomWaveArrayLength,
-        carrierCustomWaveSeed,
-        ctx
-      })
-    );
-  } else {
-    carrierOsc.type = carrierWaveType;
-    carrierOsc.frequency.value = carrierFreq;
-  }
+  });
 
   var compressor = ctx.createDynamicsCompressor();
 
@@ -56,19 +40,29 @@ export function playSynth({
     reverb.dry.value = reverbDry;
   }
 
+  var vibrato = getVibrato({
+    rateFreq: vibratoRateHz,
+    pitchVariance: vibratoPitchVarCents,
+    ctx
+  });
+
   if (modOn) {
     const deviation = modIndex * modFreq;
     var modulator = ctx.createOscillator();
     modulator.frequency.value = modFreq;
     var modulatorAmp = ctx.createGain();
     modulatorAmp.gain.value = deviation;
-    vibrato.amp.connect(modulator.detune);
+    if (vibratoOn) {
+      vibrato.amp.connect(modulator.detune);
+    }
     modulator.connect(modulatorAmp);
-    modulatorAmp.connect(carrierOsc.frequency);
+    modulatorAmp.connect(carrier.node().frequency);
+  } else if (vibratoOn) {
+    //vibrato.amp.connect();
   }
 
   let envelope = ctx.createGain();
-  carrierOsc.connect(envelope);
+  carrier.connect({ destNode: envelope });
 
   if (reverbSeconds) {
     envelope.connect(reverb);
@@ -101,10 +95,12 @@ export function playSynth({
       modulator.start(startTime);
       modulator.stop(endTime);
     }
-    carrierOsc.start(startTime);
-    carrierOsc.stop(endTime);
-    vibrato.generator.start(startTime);
-    vibrato.generator.stop(endTime);
+    carrier.play({ startTime, endTime });
+
+    if (vibratoOn) {
+      vibrato.generator.start(startTime);
+      vibrato.generator.stop(endTime);
+    }
   }
 }
 
@@ -115,22 +111,4 @@ function getVibrato({ rateFreq, pitchVariance, ctx }) {
   amp.gain.value = pitchVariance;
   generator.connect(amp);
   return { generator, amp };
-}
-
-function getCustomWave({
-  carrierCustomWaveArrayLength,
-  carrierCustomWaveSeed,
-  ctx
-}) {
-  var random = seedrandom(carrierCustomWaveSeed);
-  var real = new Float32Array(carrierCustomWaveArrayLength);
-  var imaginary = new Float32Array(carrierCustomWaveArrayLength);
-  real[0] = 0;
-  imaginary[0] = 0;
-  for (var i = 1; i < carrierCustomWaveArrayLength; ++i) {
-    real[i] = -1.0 + random() * 2;
-    imaginary[i] = -1.0 + random() * 2;
-  }
-  //console.log('real', real, 'imaginary', imaginary);
-  return ctx.createPeriodicWave(real, imaginary);
 }
