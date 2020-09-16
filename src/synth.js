@@ -3,7 +3,8 @@ import {
   VibratoGenerator,
   VibratoAmp,
   Envelope,
-  Reverb
+  Reverb,
+  Compressor
 } from './synth-node';
 
 export function playSynth({
@@ -27,6 +28,12 @@ export function playSynth({
   reverbSeconds,
   reverbWet,
   reverbDry,
+  compressorOn = false,
+  compressorThreshold = -50,
+  compressorKnee = 40,
+  compressorRatio = 12,
+  compressorAttack = 0,
+  compressorRelease = 0.25,
   ctx
 }) {
   var carrier = new Carrier(ctx, {
@@ -36,7 +43,13 @@ export function playSynth({
     carrierCustomWaveSeed
   });
 
-  var compressor = ctx.createDynamicsCompressor();
+  var compressor = new Compressor(ctx, {
+    compressorThreshold,
+    compressorKnee,
+    compressorRatio,
+    compressorAttack,
+    compressorRelease
+  });
 
   var vibratoGen = new VibratoGenerator(ctx, {
     rateFreq: vibratoRateHz
@@ -76,12 +89,12 @@ export function playSynth({
 
   if (reverbOn) {
     envelope.connect({ synthNode: reverb });
-    reverb.connect({ audioNode: compressor });
+    reverb.connect({ synthNode: compressor });
   } else {
-    envelope.connect({ audioNode: compressor });
+    envelope.connect({ synthNode: compressor });
   }
 
-  compressor.connect(ctx.destination);
+  compressor.connect({ audioNode: ctx.destination });
 
   play();
 
@@ -91,11 +104,9 @@ export function playSynth({
     if (envelopeOn) {
       envelope.play({ startTime, endTime: stopTime });
     }
-    compressor.threshold.setValueAtTime(-50, startTime);
-    compressor.knee.setValueAtTime(40, startTime);
-    compressor.ratio.setValueAtTime(12, startTime);
-    compressor.attack.setValueAtTime(0, startTime);
-    compressor.release.setValueAtTime(0.25, startTime);
+    if (compressorOn) {
+      compressor.play({ startTime });
+    }
 
     const endTime = stopTime + (envelopeOn ? timeNeededForEnvelopeDecay : 0);
 

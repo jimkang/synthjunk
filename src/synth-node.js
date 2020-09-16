@@ -97,6 +97,23 @@ export class Reverb extends SynthNode {
   }
 }
 
+export class Compressor extends SynthNode {
+  constructor(ctx, params) {
+    super(ctx, params);
+    this.node = ctx.createDynamicsCompressor();
+  }
+  play({ startTime }) {
+    this.node.threshold.setValueAtTime(
+      this.params.compressorThreshold,
+      startTime
+    );
+    this.node.knee.setValueAtTime(this.params.compressorKnee, startTime);
+    this.node.ratio.setValueAtTime(this.params.compressorRatio, startTime);
+    this.node.attack.setValueAtTime(this.params.compressorAttack, startTime);
+    this.node.release.setValueAtTime(this.params.compressorRelease, startTime);
+  }
+}
+
 function getCustomWave({
   carrierCustomWaveArrayLength,
   carrierCustomWaveSeed,
