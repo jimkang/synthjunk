@@ -38,8 +38,10 @@ export class VibratoAmp extends SynthNode {
     this.node = this.ctx.createGain();
     this.node.gain.value = this.params.pitchVariance;
   }
-  connect({ destNode }) {
-    this.node.connect(destNode.detune);
+  connect({ synthNode, destNode }) {
+    var connectTargetNode = destNode || synthNode.node;
+    var connectTarget = connectTargetNode[this.params.destProp || 'detune'];
+    this.node.connect(connectTarget);
   }
 }
 

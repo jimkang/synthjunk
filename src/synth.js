@@ -38,6 +38,9 @@ export function playSynth({
 
   var vibratoAmp = new VibratoAmp(ctx, { pitchVariance: vibratoPitchVarCents });
 
+  var modGen;
+  var modAmp;
+
   var reverb;
   if (reverbSeconds) {
     reverb = Reverb(ctx);
@@ -48,14 +51,16 @@ export function playSynth({
 
   if (modOn) {
     const deviation = modIndex * modFreq;
-    var modulator = ctx.createOscillator();
-    modulator.frequency.value = modFreq;
-    var modulatorAmp = ctx.createGain();
-    modulatorAmp.gain.value = deviation;
-    modulator.connect(modulatorAmp);
-    modulatorAmp.connect(carrier.node.frequency);
+    modGen = new VibratoGenerator(ctx, { rateFreq: modFreq });
+    modAmp = new VibratoAmp(ctx, {
+      pitchVariance: deviation,
+      destProp: 'frequency'
+    });
 
-    vibratoAmp.connect({ destNode: modulator });
+    modGen.connect({ synthNode: modAmp });
+    modAmp.connect({ synthNode: carrier });
+
+    vibratoAmp.connect({ synthNode: modGen });
   }
 
   if (vibratoOn) {
@@ -94,8 +99,7 @@ export function playSynth({
     const endTime = stopTime + (envelopeOn ? timeNeededForEnvelopeDecay : 0);
 
     if (modOn) {
-      modulator.start(startTime);
-      modulator.stop(endTime);
+      modGen.play({ startTime, endTime });
     }
     carrier.play({ startTime, endTime });
 
