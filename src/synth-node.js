@@ -1,4 +1,5 @@
 import seedrandom from 'seedrandom';
+import SoundbankReverb from 'soundbank-reverb';
 
 export class SynthNode {
   constructor(ctx, params) {
@@ -9,9 +10,9 @@ export class SynthNode {
   node() {
     return this.node;
   }
-  connect({ synthNode, destNode }) {
-    if (destNode) {
-      this.node.connect(destNode);
+  connect({ synthNode, audioNode }) {
+    if (audioNode) {
+      this.node.connect(audioNode);
     } else if (synthNode) {
       this.node.connect(synthNode.node);
     } else {
@@ -38,8 +39,8 @@ export class VibratoAmp extends SynthNode {
     this.node = this.ctx.createGain();
     this.node.gain.value = this.params.pitchVariance;
   }
-  connect({ synthNode, destNode }) {
-    var connectTargetNode = destNode || synthNode.node;
+  connect({ synthNode, audioNode }) {
+    var connectTargetNode = audioNode || synthNode.node;
     var connectTarget = connectTargetNode[this.params.destProp || 'detune'];
     this.node.connect(connectTarget);
   }
@@ -82,6 +83,17 @@ export class Envelope extends SynthNode {
       this.params.envelopePeakRateK
     );
     this.node.gain.setTargetAtTime(0, endTime, this.params.envelopeDecayRateK);
+  }
+}
+
+export class Reverb extends SynthNode {
+  constructor(ctx, params) {
+    super(ctx, params);
+    this.node = this.ctx.createGain();
+    this.node = SoundbankReverb(ctx);
+    this.node.time = this.params.reverbSeconds;
+    this.node.wet.value = this.params.reverbWet;
+    this.node.dry.value = this.params.reverbDry;
   }
 }
 

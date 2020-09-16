@@ -1,5 +1,10 @@
-import Reverb from 'soundbank-reverb';
-import { Carrier, VibratoGenerator, VibratoAmp, Envelope } from './synth-node';
+import {
+  Carrier,
+  VibratoGenerator,
+  VibratoAmp,
+  Envelope,
+  Reverb
+} from './synth-node';
 
 export function playSynth({
   modOn = false,
@@ -18,6 +23,7 @@ export function playSynth({
   vibratoPitchVarCents,
   delaySeconds,
   soundDurationSeconds,
+  reverbOn = false,
   reverbSeconds,
   reverbWet,
   reverbDry,
@@ -42,11 +48,8 @@ export function playSynth({
   var modAmp;
 
   var reverb;
-  if (reverbSeconds) {
-    reverb = Reverb(ctx);
-    reverb.time = reverbSeconds;
-    reverb.wet.value = reverbWet;
-    reverb.dry.value = reverbDry;
+  if (reverbOn) {
+    reverb = new Reverb(ctx, { reverbSeconds, reverbWet, reverbDry });
   }
 
   if (modOn) {
@@ -64,18 +67,18 @@ export function playSynth({
   }
 
   if (vibratoOn) {
-    vibratoAmp.connect({ destNode: carrier.node });
+    vibratoAmp.connect({ audioNode: carrier.node });
   }
   vibratoGen.connect({ synthNode: vibratoAmp });
 
   var envelope = new Envelope(ctx, { envelopePeakRateK, envelopeDecayRateK });
   carrier.connect({ synthNode: envelope });
 
-  if (reverbSeconds) {
-    envelope.connect({ destNode: reverb });
-    reverb.connect(compressor);
+  if (reverbOn) {
+    envelope.connect({ synthNode: reverb });
+    reverb.connect({ audioNode: compressor });
   } else {
-    envelope.connect(compressor);
+    envelope.connect({ audioNode: compressor });
   }
 
   compressor.connect(ctx.destination);
