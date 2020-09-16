@@ -1,5 +1,5 @@
 import Reverb from 'soundbank-reverb';
-import { Carrier, VibratoGenerator, VibratoAmp } from './synth-node';
+import { Carrier, VibratoGenerator, VibratoAmp, Envelope } from './synth-node';
 
 export function playSynth({
   modOn = false,
@@ -68,11 +68,11 @@ export function playSynth({
   }
   vibratoGen.connect({ synthNode: vibratoAmp });
 
-  let envelope = ctx.createGain();
-  carrier.connect({ destNode: envelope });
+  var envelope = new Envelope(ctx, { envelopePeakRateK, envelopeDecayRateK });
+  carrier.connect({ synthNode: envelope });
 
   if (reverbSeconds) {
-    envelope.connect(reverb);
+    envelope.connect({ destNode: reverb });
     reverb.connect(compressor);
   } else {
     envelope.connect(compressor);
@@ -86,9 +86,7 @@ export function playSynth({
     const startTime = ctx.currentTime + delaySeconds;
     const stopTime = startTime + +soundDurationSeconds;
     if (envelopeOn) {
-      envelope.gain.value = 0;
-      envelope.gain.setTargetAtTime(0.1, startTime, envelopePeakRateK);
-      envelope.gain.setTargetAtTime(0, stopTime, envelopeDecayRateK);
+      envelope.play({ startTime, endTime: stopTime });
     }
     compressor.threshold.setValueAtTime(-50, startTime);
     compressor.knee.setValueAtTime(40, startTime);
