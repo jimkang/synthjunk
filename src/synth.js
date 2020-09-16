@@ -1,5 +1,5 @@
 import Reverb from 'soundbank-reverb';
-import { Carrier } from './synth-node';
+import { Carrier, VibratoGenerator, VibratoAmp } from './synth-node';
 
 export function playSynth({
   modOn = false,
@@ -13,7 +13,7 @@ export function playSynth({
   envelopePeakRateK,
   envelopeDecayRateK,
   timeNeededForEnvelopeDecay = 2,
-  vibratoOn = false,
+  vibratoOn = true,
   vibratoRateHz,
   vibratoPitchVarCents,
   delaySeconds,
@@ -32,6 +32,12 @@ export function playSynth({
 
   var compressor = ctx.createDynamicsCompressor();
 
+  var vibratoGen = new VibratoGenerator(ctx, {
+    rateFreq: vibratoRateHz
+  });
+
+  var vibratoAmp = new VibratoAmp(ctx, { pitchVariance: vibratoPitchVarCents });
+
   var reverb;
   if (reverbSeconds) {
     reverb = Reverb(ctx);
@@ -40,26 +46,22 @@ export function playSynth({
     reverb.dry.value = reverbDry;
   }
 
-  var vibrato = getVibrato({
-    rateFreq: vibratoRateHz,
-    pitchVariance: vibratoPitchVarCents,
-    ctx
-  });
-
   if (modOn) {
     const deviation = modIndex * modFreq;
     var modulator = ctx.createOscillator();
     modulator.frequency.value = modFreq;
     var modulatorAmp = ctx.createGain();
     modulatorAmp.gain.value = deviation;
-    if (vibratoOn) {
-      vibrato.amp.connect(modulator.detune);
-    }
     modulator.connect(modulatorAmp);
-    modulatorAmp.connect(carrier.node().frequency);
-  } else if (vibratoOn) {
-    //vibrato.amp.connect();
+    modulatorAmp.connect(carrier.node.frequency);
+
+    vibratoAmp.connect({ destNode: modulator });
   }
+
+  if (vibratoOn) {
+    vibratoAmp.connect({ destNode: carrier.node });
+  }
+  vibratoGen.connect({ synthNode: vibratoAmp });
 
   let envelope = ctx.createGain();
   carrier.connect({ destNode: envelope });
@@ -98,17 +100,7 @@ export function playSynth({
     carrier.play({ startTime, endTime });
 
     if (vibratoOn) {
-      vibrato.generator.start(startTime);
-      vibrato.generator.stop(endTime);
+      vibratoGen.play({ startTime, endTime });
     }
   }
-}
-
-function getVibrato({ rateFreq, pitchVariance, ctx }) {
-  var generator = ctx.createOscillator();
-  generator.frequency.value = rateFreq;
-  var amp = ctx.createGain();
-  amp.gain.value = pitchVariance;
-  generator.connect(amp);
-  return { generator, amp };
 }

@@ -9,8 +9,14 @@ export class SynthNode {
   node() {
     return this.node;
   }
-  connect({ destNode }) {
-    this.node.connect(destNode);
+  connect({ synthNode, destNode }) {
+    if (destNode) {
+      this.node.connect(destNode);
+    } else if (synthNode) {
+      this.node.connect(synthNode.node);
+    } else {
+      throw new Error('No synthNode or raw AudioNode passed to connect.');
+    }
   }
   play({ startTime, endTime }) {
     this.node.start(startTime);
