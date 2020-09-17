@@ -1,7 +1,7 @@
 // Warning! Rerendering after changes props that have a
 // dependency only work for checkbox and select props
 // that are dependencies right now.
-var synthDefPropDefs = [
+var synthPropDefs = [
   {
     propName: 'name',
     displayName: 'Name',
@@ -88,39 +88,61 @@ var synthDefPropDefs = [
     conditionPropVal: true
   },
   {
+    propName: 'vibratoOn',
+    displayName: 'On',
+    inputType: 'checkbox',
+    defaultValue: true
+  },
+  {
     propName: 'vibratoRateHz',
     displayName: 'Vibrato rate (Hz)',
     inputType: 'number',
     step: 1,
-    defaultValue: 5
+    defaultValue: 5,
+    conditionProp: 'vibratoOn',
+    conditionPropVal: true
   },
   {
     propName: 'vibratoPitchVarCents',
     displayName: 'Vibrato pitch variance (cents)',
     inputType: 'number',
     step: 1,
-    defaultValue: 30
+    defaultValue: 30,
+    conditionProp: 'vibratoOn',
+    conditionPropVal: true
+  },
+  {
+    propName: 'reverbOn',
+    displayName: 'On',
+    inputType: 'checkbox',
+    defaultValue: true
   },
   {
     propName: 'reverbSeconds',
     displayName: 'Reverb length (seconds)',
     inputType: 'number',
     step: 0.1,
-    defaultValue: 1
+    defaultValue: 1,
+    conditionProp: 'reverbOn',
+    conditionPropVal: true
   },
   {
     propName: 'reverbWet',
     displayName: 'Proportion of wet signal in reverb',
     inputType: 'number',
     step: 0.1,
-    defaultValue: 0.8
+    defaultValue: 0.8,
+    conditionProp: 'reverbOn',
+    conditionPropVal: true
   },
   {
     propName: 'reverbDry',
     displayName: 'Proportion of dry signal in reverb',
     inputType: 'number',
     step: 0.1,
-    defaultValue: 0.6
+    defaultValue: 0.6,
+    conditionProp: 'reverbOn',
+    conditionPropVal: true
   },
   {
     propName: 'soundDurationSeconds',
@@ -131,4 +153,4 @@ var synthDefPropDefs = [
   }
 ];
 
-export default synthDefPropDefs;
+export default synthPropDefs;

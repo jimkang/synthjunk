@@ -1,4 +1,4 @@
 import { writable } from 'svelte/store';
 
-var synthDefsContainer = { defs: [] };
-export const synthDefs = writable(synthDefsContainer);
+var synthInstsContainer = { insts: [] };
+export const synthInsts = writable(synthInstsContainer);

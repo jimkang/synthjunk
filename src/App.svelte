@@ -1,9 +1,11 @@
 <script>
 import SynthPanel from './SynthPanel.svelte';
 import { version } from '../package.json';
-import synthDefPropDefs from './synth-def-prop-defs';
+import synthPropDefs from './synth-prop-defs';
 import RouteState from 'route-state';
-import { synthDefs } from './store';
+import { synthInsts } from './store';
+import cloneDeep from 'lodash.clonedeep';
+import curry from 'lodash.curry';
 
 let routeState = RouteState({
   followRoute,
@@ -12,28 +14,28 @@ let routeState = RouteState({
 
 routeState.routeFromHash();
 
-function followRoute({ defs }) {
-  if (defs) {
-    $synthDefs.defs = defs.map(convertRouteBoolsFromHash);
+function followRoute({ insts }) {
+  if (insts) {
+    $synthInsts.insts = insts.map(convertRouteBoolsFromHash);
   }
 }
 
 function commitStoreToHash() {
-  var defs = $synthDefs.defs.map(convertRouteBoolsForHash);
-  routeState.addToRoute({ defs }, false);
+  var insts = $synthInsts.insts.map(convertRouteBoolsForHash);
+  routeState.addToRoute({ insts }, false);
 }
 
 function onAddSynthClick() {
-  synthDefs.set({ defs: $synthDefs.defs.concat(createSynthDef()) });
+  synthInsts.set({ insts: $synthInsts.insts.concat(createSynthInst()) });
 }
 
-function createSynthDef() {
-  var newDef = {};
-  synthDefPropDefs.forEach(addDefault);
-  return newDef;
+function createSynthInst() {
+  var newInst = {};
+  synthPropDefs.forEach(curry(addDefault)(newInst));
+  return newInst;
 
-  function addDefault(propDef) {
-    newDef[propDef.propName] = propDef.defaultValue;
+  function addDefault(targetInst, propDef) {
+    targetInst[propDef.propName] = propDef.defaultValue;
   }
 }
 
@@ -42,32 +44,30 @@ function onSaveSynthsClick() {
   // TODO: Render url in page body, too.
 }
 
-function convertRouteBoolsForHash(origDef) {
-  // Warning: Does not deep clone.
-  var def = Object.assign({}, origDef);
+function convertRouteBoolsForHash(origInst) {
+  var inst = cloneDeep(origInst);
 
-  for (var key in def) {
-    if (typeof def[key] === 'boolean') {
-      def[key] = def[key] ? 'yes' : 'no';
+  for (var key in inst) {
+    if (typeof inst[key] === 'boolean') {
+      inst[key] = inst[key] ? 'yes' : 'no';
     }
   }
 
-  return def;
+  return inst;
 }
 
-function convertRouteBoolsFromHash(hashDef) {
-  // Warning: Does not deep clone.
-  var def = Object.assign({}, hashDef);
+function convertRouteBoolsFromHash(hashInst) {
+  var inst = cloneDeep(hashInst);
 
-  for (var key in def) {
-    if (def[key] === 'yes') {
-      def[key] = true;
-    } else if (def[key] === 'no') {
-      def[key] = false;
+  for (var key in inst) {
+    if (inst[key] === 'yes') {
+      inst[key] = true;
+    } else if (inst[key] === 'no') {
+      inst[key] = false;
     }
   }
 
-  return def;
+  return inst;
 }
 
 </script>
@@ -76,8 +76,8 @@ function convertRouteBoolsFromHash(hashDef) {
   <h1>Synthjunk</h1>
 
   <ul class="panel-list">
-    {#each $synthDefs.defs as synthDef }
-      <SynthPanel synthDef={synthDef} />
+    {#each $synthInsts.insts as synthInst }
+      <SynthPanel synthInst={synthInst} />
     {/each}
   </ul>
 

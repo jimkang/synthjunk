@@ -91,3 +91,7 @@ button:focus {
   font-size: 0.5em;
   color: #666;
 }
+
+.synth-prop-group {
+  border: 1px solid #999;
+}
