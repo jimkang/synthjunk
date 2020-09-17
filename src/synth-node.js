@@ -20,8 +20,12 @@ export class SynthNode {
     }
   }
   play({ startTime, endTime }) {
-    this.node.start(startTime);
-    this.node.stop(endTime);
+    try {
+      this.node.start(startTime);
+      this.node.stop(endTime);
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
 
@@ -44,6 +48,7 @@ export class VibratoAmp extends SynthNode {
     var connectTarget = connectTargetNode[this.params.destProp || 'detune'];
     this.node.connect(connectTarget);
   }
+  play() {}
 }
 
 export class Carrier extends SynthNode {
@@ -82,7 +87,11 @@ export class Envelope extends SynthNode {
       startTime,
       this.params.envelopePeakRateK
     );
-    this.node.gain.setTargetAtTime(0, endTime, this.params.envelopeDecayRateK);
+    this.node.gain.setTargetAtTime(
+      0,
+      endTime - this.params.timeNeededForEnvelopeDecay,
+      this.params.envelopeDecayRateK
+    );
   }
 }
 
@@ -95,6 +104,7 @@ export class Reverb extends SynthNode {
     this.node.wet.value = this.params.reverbWet;
     this.node.dry.value = this.params.reverbDry;
   }
+  play() {}
 }
 
 export class Compressor extends SynthNode {

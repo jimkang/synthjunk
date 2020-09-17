@@ -89,7 +89,7 @@ var synthPropDefs = [
   },
   {
     propName: 'vibratoOn',
-    displayName: 'On',
+    displayName: 'Vibrato',
     inputType: 'checkbox',
     defaultValue: true
   },
@@ -113,7 +113,7 @@ var synthPropDefs = [
   },
   {
     propName: 'reverbOn',
-    displayName: 'On',
+    displayName: 'Reverb',
     inputType: 'checkbox',
     defaultValue: true
   },

@@ -36,87 +36,80 @@ export function playSynth({
   compressorRelease = 0.25,
   ctx
 }) {
-  var carrier = new Carrier(ctx, {
-    carrierFreq,
-    carrierWaveType,
-    carrierCustomWaveArrayLength,
-    carrierCustomWaveSeed
-  });
-
-  var compressor = new Compressor(ctx, {
-    compressorThreshold,
-    compressorKnee,
-    compressorRatio,
-    compressorAttack,
-    compressorRelease
-  });
-
-  var vibratoGen = new VibratoGenerator(ctx, {
-    rateFreq: vibratoRateHz
-  });
-
-  var vibratoAmp = new VibratoAmp(ctx, { pitchVariance: vibratoPitchVarCents });
-
-  var modGen;
-  var modAmp;
-
-  var reverb;
-  if (reverbOn) {
-    reverb = new Reverb(ctx, { reverbSeconds, reverbWet, reverbDry });
-  }
-
-  if (modOn) {
-    const deviation = modIndex * modFreq;
-    modGen = new VibratoGenerator(ctx, { rateFreq: modFreq });
-    modAmp = new VibratoAmp(ctx, {
-      pitchVariance: deviation,
-      destProp: 'frequency'
-    });
-
-    modGen.connect({ synthNode: modAmp });
-    modAmp.connect({ synthNode: carrier });
-
-    vibratoAmp.connect({ synthNode: modGen });
-  }
-
-  if (vibratoOn) {
-    vibratoAmp.connect({ audioNode: carrier.node });
-  }
-  vibratoGen.connect({ synthNode: vibratoAmp });
-
-  var envelope = new Envelope(ctx, { envelopePeakRateK, envelopeDecayRateK });
-  carrier.connect({ synthNode: envelope });
-
-  if (reverbOn) {
-    envelope.connect({ synthNode: reverb });
-    reverb.connect({ synthNode: compressor });
-  } else {
-    envelope.connect({ synthNode: compressor });
-  }
-
-  compressor.connect({ audioNode: ctx.destination });
-
+  var activeSynths = [];
+  setUpSynthChain();
   play();
+
+  function setUpSynthChain() {
+    if (vibratoOn) {
+      activeSynths.push(new VibratoGenerator(ctx, { rateFreq: vibratoRateHz }));
+
+      activeSynths.push(
+        new VibratoAmp(ctx, { pitchVariance: vibratoPitchVarCents })
+      );
+    }
+
+    if (modOn) {
+      const deviation = modIndex * modFreq;
+      activeSynths.push(new VibratoGenerator(ctx, { rateFreq: modFreq }));
+      activeSynths.push(
+        new VibratoAmp(ctx, { pitchVariance: deviation, destProp: 'frequency' })
+      );
+    }
+
+    activeSynths.push(
+      new Carrier(ctx, {
+        carrierFreq,
+        carrierWaveType,
+        carrierCustomWaveArrayLength,
+        carrierCustomWaveSeed
+      })
+    );
+
+    if (envelopeOn) {
+      activeSynths.push(
+        new Envelope(ctx, {
+          envelopePeakRateK,
+          envelopeDecayRateK,
+          timeNeededForEnvelopeDecay
+        })
+      );
+    }
+
+    if (reverbOn) {
+      activeSynths.push(
+        new Reverb(ctx, { reverbSeconds, reverbWet, reverbDry })
+      );
+    }
+
+    if (compressorOn) {
+      activeSynths.push(
+        new Compressor(ctx, {
+          compressorThreshold,
+          compressorKnee,
+          compressorRatio,
+          compressorAttack,
+          compressorRelease
+        })
+      );
+    }
+
+    // All of this assumes that every node only connects
+    // to one other node.
+    for (var i = 0; i < activeSynths.length - 1; ++i) {
+      let synth = activeSynths[i];
+      let nextSynth = activeSynths[i + 1];
+      synth.connect({ synthNode: nextSynth });
+    }
+    activeSynths[activeSynths.length - 1].connect({
+      audioNode: ctx.destination
+    });
+  }
 
   function play() {
     const startTime = ctx.currentTime + delaySeconds;
-    const stopTime = startTime + +soundDurationSeconds;
-    if (envelopeOn) {
-      envelope.play({ startTime, endTime: stopTime });
-    }
-    if (compressorOn) {
-      compressor.play({ startTime });
-    }
+    const endTime = startTime + +soundDurationSeconds;
 
-    const endTime = stopTime + (envelopeOn ? timeNeededForEnvelopeDecay : 0);
-
-    if (modOn) {
-      modGen.play({ startTime, endTime });
-    }
-    carrier.play({ startTime, endTime });
-
-    if (vibratoOn) {
-      vibratoGen.play({ startTime, endTime });
-    }
+    activeSynths.forEach(synthNode => synthNode.play({ startTime, endTime }));
   }
 }
