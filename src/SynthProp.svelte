@@ -17,7 +17,7 @@ function onPropControlChange() {
     <li>
       <label for="{propDef.propName}-input">{propDef.displayName}</label>
       {#if propDef.inputType === 'select'}
-        <select id="{propDef.propName}-input" bind:value={synthInst[propDef.propName]} on:change={onPropControlChange}>
+        <select id="{propDef.propName}-input" bind:value={synthInst[propDef.propName]} on:blur={onPropControlChange}>
           {#each propDef.valueOptions as option}
             <option>{option}</option>
           {/each}

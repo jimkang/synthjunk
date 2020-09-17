@@ -18,7 +18,7 @@ export function playSynth({
   envelopeOn = false,
   envelopePeakRateK,
   envelopeDecayRateK,
-  timeNeededForEnvelopeDecay = 2,
+  timeNeededForEnvelopeDecay = 1, // TODO: Expose in UI
   vibratoOn = true,
   vibratoRateHz,
   vibratoPitchVarCents,
