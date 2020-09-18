@@ -149,7 +149,7 @@ var synthPropDefs = [
     displayName: 'Duration of sound (seconds)',
     inputType: 'number',
     step: 0.1,
-    defaultValue: 1
+    defaultValue: 3
   }
 ];
 
