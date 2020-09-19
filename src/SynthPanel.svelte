@@ -7,6 +7,7 @@ import ContextKeeper from 'audio-context-singleton';
 import ErrorMessage from 'svelte-error-message';
 import ep from 'errorback-promise';
 import SynthProp from './SynthProp.svelte';
+import { nestPropDefs } from './nest-prop-defs';
 
 let error;
 
@@ -29,13 +30,19 @@ function onPropChanged(e) {
   // TODO: Rerender just the props that depend on changedProp.
   synthInst = synthInst;
 }
-// TODO: Nest groups before rendering using conditionProp.
+
 </script>
 
 <li>
   <ul>
-    {#each synthPropDefs as synthPropDefsChild }
-      <SynthProp propDef={synthPropDefsChild} synthInst={synthInst} on:propChanged={onPropChanged} />
+    {#each nestPropDefs(synthPropDefs) as group}
+      <li>
+        <h3>{group.displayName}</h3>
+        <ul>
+          {#each group.dependents as synthPropDefsChild }
+            <SynthProp propDef={synthPropDefsChild} synthInst={synthInst} on:propChanged={onPropChanged} />
+        {/each}
+      </li>
     {/each}
   </ul>
   <button on:click={onPlayClick}>Play</button>
